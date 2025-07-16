@@ -7,7 +7,7 @@ main () {
 	// INIT
     auto xcb       = XCB ();
     //auto c         = xcb.connect (true,"ASUS-K53SD");
-    auto c         = xcb.connect (false,"");
+    auto c         = xcb.connect (false,null);
     auto screen    = c.screen;
     auto window    = c.window (screen);
 
