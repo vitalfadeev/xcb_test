@@ -56,6 +56,9 @@ Event {
     alias event = _super;
 
     KeyboadEvent keyboard () { return KeyboadEvent (cast (xcb_key_press_event_t*) event); }
+    ButtonEvent  button () { return ButtonEvent (cast (xcb_button_press_event_t*) event); }
+    MotionEvent  motion () { return MotionEvent (cast (xcb_motion_notify_event_t*) event); }
+    ExposeEvent  expose () { return ExposeEvent (cast (xcb_expose_event_t*) event); }
     Type         type ()     { 
         switch (response_type & ~0x80) {
             case XCB_KEY_PRESS         : return Type.KEY_PRESS;
@@ -159,8 +162,71 @@ KeyboadEvent {
     xcb_key_press_event_t* _super;
     alias _super this;
 
-    auto key ()  { return detail; }
-    auto type () { return (response_type & ~0x80); }
+    auto  type () { return ((cast (Event) (this)).type); }
+    auto  key ()  { return detail; }
+    Event opCast (T) () if (is (T == Event)) { return Event (cast (xcb_generic_event_t*) _super); }
+
+    string
+    toString () {
+        import std.format : format;
+        return format!
+            "Event: %s, %s" 
+            ((cast (Event) (this)).type, key);
+    }
+}
+
+struct
+ButtonEvent {
+    xcb_button_press_event_t* _super;
+    alias _super this;
+
+    auto  type () { return ((cast (Event) (this)).type); }
+    auto  button ()  { return detail; }
+    Event opCast (T) () if (is (T == Event)) { return Event (cast (xcb_generic_event_t*) _super); }
+
+    string
+    toString () {
+        import std.format : format;
+        return format!
+            "Event: %s, %s, xy (%d,%d), state (%d)" 
+            ((cast (Event) (this)).type, button, event_x, event_y, state);
+    }
+}
+
+struct
+MotionEvent {
+    xcb_motion_notify_event_t* _super;
+    alias _super this;
+
+    auto  type () { return ((cast (Event) (this)).type); }
+    auto  detail ()  { return cast (xcb_notify_detail_t) _super.detail; }  // xcb_notify_detail_t
+    Event opCast (T) () if (is (T == Event)) { return Event (cast (xcb_generic_event_t*) _super); }
+
+    string
+    toString () {
+        import std.format : format;
+        return format!
+            "Event: %s, %s, xy (%d,%d), state (%d)" 
+            ((cast (Event) (this)).type, detail, event_x, event_y, state);
+    }
+}
+
+struct
+ExposeEvent {
+    xcb_expose_event_t* _super;
+    alias _super this;
+
+    auto  type () { return ((cast (Event) (this)).type); }
+    auto  window ()  { return Window (_super.window); }
+    Event opCast (T) () if (is (T == Event)) { return Event (cast (xcb_generic_event_t*) _super); }
+
+    string
+    toString () {
+        import std.format : format;
+        return format!
+            "Event: %s, %s, xy wh (%d,%d %d x %d)," 
+            ((cast (Event) (this)).type, window, x, y, width, height);
+    }
 }
 
 struct

@@ -16,7 +16,23 @@ main () {
 
     // EVENT LOOP
     foreach (event; c.events) {
-        writeln (event);
+        switch (event.type) {
+            case Event.Type.KEY_PRESS   : 
+            case Event.Type.KEY_RELEASE : 
+                writeln (event.keyboard);
+                break;
+            case Event.Type.BUTTON_PRESS   : 
+            case Event.Type.BUTTON_RELEASE : 
+                writeln (event.button);
+                break;
+            case Event.Type.MOTION_NOTIFY : 
+                writeln (event.motion);
+                break;
+            case Event.Type.EXPOSE : 
+                writeln (event.expose);
+                break;
+            default : writeln (event);
+        }        
     }
 
     c.disconnect ();
