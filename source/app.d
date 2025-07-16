@@ -4,7 +4,7 @@ import xcb_struct;
 
 void 
 main () {
-	// INIT
+    // INIT
     auto xcb       = XCB ();
     //auto c         = xcb.connect (true,"ASUS-K53SD");
     auto c         = xcb.connect (false,null);
@@ -32,7 +32,7 @@ main () {
                 writeln (event.expose);
                 break;
             default : writeln (event);
-        }        
+        }
     }
 
     c.disconnect ();
