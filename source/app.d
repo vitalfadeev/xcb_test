@@ -15,7 +15,7 @@ main () {
     writeln ("hwnd: ",window);
 
     // EVENT LOOP
-    foreach (event; c.events) {
+    foreach (Event event; c.events) {
         switch (event.type) {
             case Event.Type.KEY_PRESS   : 
             case Event.Type.KEY_RELEASE : 
