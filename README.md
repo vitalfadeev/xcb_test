@@ -16,8 +16,8 @@ main () {
     auto screen    = c.screen;
     auto window    = c.window (screen,0,0,800,600);
 
-    writeln ("width x height (in pixels): ", screen.width_in_pixels, "x", screen.height_in_pixels);
-    writeln ("hwnd: ",window);
+    writeln ("screen width x height (in pixels): ", screen.width_in_pixels, "x", screen.height_in_pixels);
+    writeln ("window: ",window);
 
     // EVENT LOOP
     foreach (Event event; c.events) {
