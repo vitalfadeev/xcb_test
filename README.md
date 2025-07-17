@@ -47,8 +47,8 @@ main () {
 output:
 
 ```
-width x height (in pixels): 1366x768
-hwnd: Window: 18874368
+screen width x height (in pixels): 1366x768
+window: Window: 18874368
 Event: CONFIGURE_NOTIFY
 Event: REPARENT_NOTIFY
 Event: CONFIGURE_NOTIFY
