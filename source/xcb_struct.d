@@ -256,12 +256,12 @@ Connection {
 
     pragma (inline, true):
     Screen     screen ()                                { return Screen (xcb_setup_roots_iterator (xcb_get_setup (_super)).data); }  // Get the first screen  // screen = xcb_setup_roots_iterator( xcb_get_setup( c ) )[prefered_screen].data;
-    Window     window (Screen screen)                   { return _create_window (this,screen); }
+    Window     window (Screen screen,short x, short y, short w, short h) { return _create_window (this,screen,x,y,w,h); }
     Events     events ()                                { return Events (this); }
 
     int        flush ()                                 { return xcb_flush (_super); }
     uint       get_maximum_request_length ()            { return xcb_get_maximum_request_length (_super); }
-    void       prefetch_maximum_request_length ()       { xcb_prefetch_maximum_request_length (_super); }
+    void       prefetch_maximum_request_length ()       {        xcb_prefetch_maximum_request_length (_super); }
     Event      wait_for_event ()                        { return Event (xcb_wait_for_event (_super)); }
     Event      poll_for_queued_event ()                 { return Event (xcb_poll_for_queued_event (_super)); }
     Event      poll_for_special_event (SpecEvent se)    { return Event (xcb_poll_for_special_event (_super,se)); }
@@ -269,22 +269,22 @@ Connection {
     SpecEvent  register_for_special_xge (xcb_extension_t* ext, uint eid, uint* stamp)  
                                                         { return SpecEvent (xcb_register_for_special_xge (_super,ext,eid,stamp)); }
     void       unregister_for_special_event (SpecEvent se) 
-                                                        { xcb_unregister_for_special_event (_super,se); }
+                                                        {        xcb_unregister_for_special_event (_super,se); }
     Error      request_check (xcb_void_cookie_t cookie) { return Error (xcb_request_check (_super,cookie)); }
-    void       discard_reply (uint sequence)            { xcb_discard_reply (_super, sequence); }
-    void       discard_reply64 (uint sequence)          { xcb_discard_reply64 (_super, sequence); }
+    void       discard_reply (uint sequence)            {        xcb_discard_reply (_super, sequence); }
+    void       discard_reply64 (uint sequence)          {        xcb_discard_reply64 (_super, sequence); }
     xcb_query_extension_reply_t* 
                get_extension_data (xcb_extension_t* ext) 
                                                         { return xcb_get_extension_data (_super,ext); }
     void       prefetch_extension_data (xcb_extension_t* ext) 
-                                                        { xcb_prefetch_extension_data (_super,ext); }
+                                                        {        xcb_prefetch_extension_data (_super,ext); }
     xcb_setup_t* 
                get_setup ()                             { return xcb_get_setup (_super); }
     int        get_file_descriptor ()                   { return xcb_get_file_descriptor (_super); }
     int        connection_has_error ()                  { return xcb_connection_has_error (_super); }
     Connection connect_to_fd (int fd, xcb_auth_info_t* auth_info) 
                                                         { return Connection (xcb_connect_to_fd (fd,auth_info)); }
-    void       disconnect ()                            { xcb_disconnect (_super); }
+    void       disconnect ()                            {        xcb_disconnect (_super); }
     int        parse_display (const char* name, char** host, int* display, int* screen) 
                                                         { return xcb_parse_display (name,host,display,screen); }
     Connection connect(const char* displayname, int* screenp) 
@@ -292,7 +292,7 @@ Connection {
     Connection connect_to_display_with_auth_info (const char* display, xcb_auth_info_t* auth, int* screen) 
                                                         { return Connection (xcb_connect_to_display_with_auth_info (display,auth,screen)); }
     uint       generate_id ()                           { return xcb_generate_id (_super); }
-    void       map_window (Window window)               { xcb_map_window (_super,window); }
+    void       map_window (Window window)               {        xcb_map_window (_super,window); }
 }
 
 struct
@@ -366,12 +366,12 @@ get_auth (out XAuth xauth, string _address) {
 }
 
 Window
-_create_window (Connection c, Screen screen) {
+_create_window (Connection c, Screen screen, short x, short y, short w, short h) {
     // WINDOW
     xcb_window_t hwnd;
 
     // Ask for our window's Id
-    hwnd = xcb_generate_id (c);
+    hwnd = c.generate_id;
 
     //
     immutable(uint)   value_mask = 
@@ -396,14 +396,14 @@ _create_window (Connection c, Screen screen) {
             c,                             // Connection          
             XCB_COPY_FROM_PARENT,          // depth (same as root)
             hwnd,                          // window Id           
-            screen.root,          // parent window       
-            0, 0,                          // x, y                
-            800, 600,                // width, height       
-            2,                            // border_width        
+            screen.root,                   // parent window       
+            x, y,                          // x, y                
+            w, h,                          // width, height       
+            2,                             // border_width        
             XCB_WINDOW_CLASS_INPUT_OUTPUT, // class               
-            screen.root_visual,   // visual              
-            value_mask,                         // masks
-            value_list.ptr                  // not used yet 
+            screen.root_visual,            // visual              
+            value_mask,                    // masks
+            value_list.ptr                 // not used yet 
         );       
 
     auto window = Window (hwnd);
